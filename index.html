@@ -30,7 +30,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-main{width:100%;padding:13px;background:#06C755;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:background .2s;}
 .btn-main:hover{background:#05b04b;}
 .btn-main:disabled{background:#ccc;cursor:not-allowed;}
-.btn-scan{width:100%;padding:10px;background:transparent;color:#06C755;border:1.5px solid #06C755;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;}
 .alert{border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:10px;display:none;}
 .alert.error{background:#FCEBEB;color:#791F1F;display:block;}
 .alert.success{background:#EAF3DE;color:#27500A;display:block;}
@@ -53,13 +52,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .qr-display{background:#fff;border:2px dashed #06C755;border-radius:10px;padding:11px;text-align:center;font-size:20px;font-weight:700;color:#06C755;letter-spacing:4px;cursor:pointer;margin-bottom:6px;}
 .qr-display.empty{font-size:13px;color:#aaa;font-weight:400;letter-spacing:0;}
 .hint{font-size:11px;color:#aaa;text-align:center;margin-bottom:8px;}
-.scan-icon{width:18px;height:18px;}
 </style>
 </head>
 <body>
 <div class="card">
   <div id="loading" class="loading">กำลังโหลด...</div>
- 
+
   <div id="app" style="display:none;">
     <div class="shop-header">
       <div class="shop-icon">🧵</div>
@@ -68,33 +66,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="shop-sub">@charoenporn</div>
       </div>
     </div>
- 
+
     <div class="tabs">
       <div class="tab active" id="tab-reg" onclick="switchTab('reg')">ลงทะเบียน</div>
       <div class="tab" id="tab-check" onclick="switchTab('check')">เช็คสถานะ</div>
     </div>
- 
+
     <!-- TAB 1: ลงทะเบียน -->
     <div class="tab-content active" id="content-reg">
       <div id="reg-form">
         <div id="alert-reg" class="alert"></div>
- 
+
         <div class="step" style="margin-top:8px;">
           <div class="step-title"><span class="step-num">1</span>รหัส QR จากสติกเกอร์</div>
           <div class="qr-display empty" id="qr-display-reg" onclick="scanQR('reg')">กดเพื่อสแกน QR Code</div>
           <div class="hint">หรือกรอกรหัส 6 ตัวด้านล่าง</div>
           <input class="field-input" type="text" id="qr-input-reg" placeholder="เช่น QS6RTR" maxlength="6" style="text-align:center;letter-spacing:3px;" oninput="this.value=this.value.toUpperCase();updateQRDisplay('reg',this.value)">
-          <button class="btn-scan" onclick="scanQR('reg')">
-            <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="#06C755" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3M14 18v3M18 18h3v3h-3z"/></svg>
-            เปิดกล้องสแกน QR
-          </button>
         </div>
- 
+
         <div class="step">
           <div class="step-title"><span class="step-num">2</span>เบอร์โทรศัพท์</div>
           <input class="field-input" type="tel" id="phone-input" placeholder="0812345678" maxlength="10">
         </div>
- 
+
         <div class="step">
           <div class="step-title"><span class="step-num">3</span>บัญชี Line ของคุณ</div>
           <div class="profile-row">
@@ -105,34 +99,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             </div>
           </div>
         </div>
- 
+
         <button class="btn-main" id="reg-btn" onclick="submitRegister()">ยืนยันลงทะเบียน</button>
       </div>
- 
+
       <div class="success-screen" id="reg-success">
         <div class="success-icon">🎉</div>
         <div class="success-title">ลงทะเบียนสำเร็จ!</div>
         <div class="success-sub">เราจะแจ้งเตือนคุณผ่าน Line<br>เมื่อเสื้อถูกส่งให้ช่างปัก<br>และเมื่อปักเสร็จพร้อมรับ 🙏</div>
       </div>
     </div>
- 
+
     <!-- TAB 2: เช็คสถานะ -->
     <div class="tab-content" id="content-check">
       <div id="alert-check" class="alert" style="margin-top:8px;"></div>
- 
+
       <div class="step" style="margin-top:8px;">
         <div class="step-title"><span class="step-num">1</span>รหัส QR จากสติกเกอร์</div>
         <div class="qr-display empty" id="qr-display-check" onclick="scanQR('check')">กดเพื่อสแกน QR Code</div>
         <div class="hint">หรือกรอกรหัส 6 ตัวด้านล่าง</div>
         <input class="field-input" type="text" id="qr-input-check" placeholder="เช่น QS6RTR" maxlength="6" style="text-align:center;letter-spacing:3px;" oninput="this.value=this.value.toUpperCase();updateQRDisplay('check',this.value)">
-        <button class="btn-scan" onclick="scanQR('check')">
-          <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="#06C755" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3M14 18v3M18 18h3v3h-3z"/></svg>
-          เปิดกล้องสแกน QR
-        </button>
       </div>
- 
+
       <button class="btn-main" id="check-btn" onclick="checkStatus()">ตรวจสอบสถานะ</button>
- 
+
       <div class="status-result" id="status-result">
         <div class="status-row">
           <span class="status-label">รหัส QR</span>
@@ -154,13 +144,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 </div>
- 
+
 <script>
 const LIFF_ID = '2009630803-8mGWtrDu';
 const API_URL = 'https://script.google.com/macros/s/AKfycbxjWb47gXi7GDL0EERE_6jTvf1t_5d6FDc2f9LM_JPyWb5OJoxQfd4IfH1FvObK2KwR/exec';
- 
+
 let lineUserId = '';
- 
+
 async function initLiff() {
   try {
     await liff.init({ liffId: LIFF_ID });
@@ -182,20 +172,20 @@ async function initLiff() {
     document.getElementById('loading').textContent = 'เกิดข้อผิดพลาด: ' + err.message;
   }
 }
- 
+
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('content-' + tab).classList.add('active');
 }
- 
+
 function updateQRDisplay(tab, code) {
   const el = document.getElementById('qr-display-' + tab);
   if (code) { el.textContent = code; el.className = 'qr-display'; }
   else { el.textContent = 'กดเพื่อสแกน QR Code'; el.className = 'qr-display empty'; }
 }
- 
+
 async function scanQR(tab) {
   try {
     if (liff.isInClient()) {
@@ -212,7 +202,7 @@ async function scanQR(tab) {
     showAlert(tab, 'ไม่สามารถสแกนได้ กรุณากรอกรหัสด้วยตัวเอง', 'error');
   }
 }
- 
+
 async function submitRegister() {
   const phone = document.getElementById('phone-input').value.trim();
   const qrCode = document.getElementById('qr-input-reg').value.trim().toUpperCase();
@@ -239,7 +229,7 @@ async function submitRegister() {
     btn.disabled = false; btn.textContent = 'ยืนยันลงทะเบียน';
   }
 }
- 
+
 async function checkStatus() {
   const qr = document.getElementById('qr-input-check').value.trim().toUpperCase();
   if (!qr || qr.length !== 6) { showAlert('check','กรุณากรอกรหัส QR ให้ครบ 6 ตัว','error'); return; }
@@ -267,14 +257,14 @@ async function checkStatus() {
   }
   btn.disabled = false; btn.textContent = 'ตรวจสอบสถานะ';
 }
- 
+
 function showAlert(tab, msg, type) {
   const el = document.getElementById('alert-' + tab);
   if (!msg) { el.style.display = 'none'; return; }
   el.textContent = msg;
   el.className = 'alert ' + type;
 }
- 
+
 initLiff();
 </script>
 </body>
