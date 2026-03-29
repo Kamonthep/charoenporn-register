@@ -3,221 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ลงทะเบียนติดตามงานปัก — เจริญพร</title>
+<title>เจริญพร ชุดนักเรียน</title>
 <script src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .card { background: #fff; border-radius: 16px; padding: 2rem 1.5rem; width: 100%; max-width: 380px; }
-  .logo { text-align: center; margin-bottom: 1.5rem; }
-  .logo-icon { width: 64px; height: 64px; background: #06C755; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; }
-  .logo-icon svg { width: 32px; height: 32px; }
-  .logo h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; }
-  .logo p { font-size: 13px; color: #666; margin-top: 4px; }
-  .step { background: #f8f9fa; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
-  .step-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .step-num { width: 20px; height: 20px; background: #06C755; border-radius: 50%; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .qr-display { background: #fff; border: 2px dashed #06C755; border-radius: 10px; padding: 12px; text-align: center; font-size: 22px; font-weight: 700; color: #06C755; letter-spacing: 4px; cursor: pointer; }
-  .qr-display.empty { font-size: 13px; color: #999; font-weight: 400; letter-spacing: 0; }
-  .qr-hint { font-size: 11px; color: #999; text-align: center; margin-top: 6px; }
-  .input-group { margin-bottom: 10px; }
-  .input-group label { font-size: 12px; color: #555; display: block; margin-bottom: 4px; font-weight: 500; }
-  .input-group input { width: 100%; padding: 10px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-size: 15px; color: #1a1a1a; outline: none; transition: border-color .2s; }
-  .input-group input:focus { border-color: #06C755; }
-  .profile-row { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 8px; padding: 8px 10px; }
-  .profile-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-  .profile-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-  .profile-sub { font-size: 11px; color: #999; }
-  .btn { width: 100%; padding: 14px; background: #06C755; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 1rem; transition: background .2s; }
-  .btn:hover { background: #05b04b; }
-  .btn:disabled { background: #ccc; cursor: not-allowed; }
-  .btn-scan { width: 100%; padding: 10px; background: transparent; color: #06C755; border: 1.5px solid #06C755; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 6px; }
-  .alert { border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
-  .alert.error { background: #FCEBEB; color: #791F1F; display: block; }
-  .alert.success { background: #EAF3DE; color: #27500A; display: block; }
-  .success-screen { display: none; text-align: center; padding: 1rem 0; }
-  .success-screen.show { display: block; }
-  .success-icon { font-size: 56px; margin-bottom: 1rem; }
-  .success-title { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
-  .success-sub { font-size: 14px; color: #555; line-height: 1.6; }
-  .main-form { }
-  .loading { text-align: center; padding: 2rem; color: #666; font-size: 14px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem;}
+.card{background:#fff;border-radius:16px;width:100%;max-width:400px;overflow:hidden;margin-top:0.5rem;}
+.shop-header{background:#06C755;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:12px;}
+.shop-icon{width:44px;height:44px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.shop-name{font-size:16px;font-weight:700;color:#fff;}
+.shop-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px;}
+.tabs{display:flex;border-bottom:0.5px solid #e8e8e8;}
+.tab{flex:1;padding:12px 8px;text-align:center;font-size:14px;font-weight:500;color:#999;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+.tab.active{color:#06C755;border-bottom-color:#06C755;}
+.tab-content{padding:1.25rem 1.5rem;display:none;}
+.tab-content.active{display:block;}
+.step{background:#f8f9fa;border-radius:12px;padding:1rem 1.1rem;margin-bottom:10px;}
+.step-title{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.step-num{width:20px;height:20px;background:#06C755;border-radius:50%;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.input-wrap{position:relative;}
+.input-wrap input{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;color:#1a1a1a;outline:none;transition:border-color .2s;}
+.input-wrap input:focus{border-color:#06C755;}
+.profile-row{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:8px 10px;}
+.profile-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;}
+.profile-name{font-size:13px;font-weight:500;color:#1a1a1a;}
+.profile-sub{font-size:11px;color:#999;}
+.btn-main{width:100%;padding:13px;background:#06C755;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;transition:background .2s;}
+.btn-main:hover{background:#05b04b;}
+.btn-main:disabled{background:#ccc;cursor:not-allowed;}
+.btn-scan{width:100%;padding:9px;background:transparent;color:#06C755;border:1.5px solid #06C755;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;margin-top:6px;}
+.alert{border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:10px;display:none;}
+.alert.error{background:#FCEBEB;color:#791F1F;display:block;}
+.alert.success{background:#EAF3DE;color:#27500A;display:block;}
+.success-screen{display:none;text-align:center;padding:1.5rem 0;}
+.success-screen.show{display:block;}
+.success-icon{font-size:52px;margin-bottom:12px;}
+.success-title{font-size:19px;font-weight:700;color:#1a1a1a;margin-bottom:8px;}
+.success-sub{font-size:13px;color:#555;line-height:1.7;}
+.status-result{background:#f8f9fa;border-radius:12px;padding:1.1rem;margin-top:12px;display:none;}
+.status-result.show{display:block;}
+.status-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid #eee;font-size:13px;}
+.status-row:last-child{border-bottom:none;}
+.status-label{color:#777;}
+.status-val{font-weight:500;color:#1a1a1a;}
+.status-pill{font-size:12px;padding:3px 12px;border-radius:99px;font-weight:500;}
+.p-gray{background:#F1EFE8;color:#444441;}
+.p-blue{background:#E6F1FB;color:#0C447C;}
+.p-green{background:#EAF3DE;color:#27500A;}
+.loading{text-align:center;padding:2rem;color:#888;font-size:14px;}
+.qr-display{background:#fff;border:2px dashed #06C755;border-radius:10px;padding:11px;text-align:center;font-size:20px;font-weight:700;color:#06C755;letter-spacing:4px;cursor:pointer;margin-bottom:6px;}
+.qr-display.empty{font-size:13px;color:#aaa;font-weight:400;letter-spacing:0;}
+.hint{font-size:11px;color:#aaa;text-align:center;margin-bottom:8px;}
 </style>
 </head>
 <body>
 <div class="card">
-
-  <div id="loading" class="loading">กำลังโหลด...</div>
-
-  <div id="main-form" class="main-form" style="display:none;">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </div>
-      <h1>เจริญพร ชุดนักเรียน</h1>
-      <p>ลงทะเบียนรับแจ้งเตือนงานปัก</p>
-    </div>
-
-    <div id="alert" class="alert"></div>
-
-    <div class="step">
-      <div class="step-title"><span class="step-num">1</span>รหัส QR จากสติกเกอร์ที่ร้านให้</div>
-      <div class="qr-display empty" id="qr-display" onclick="scanQR()">กดเพื่อสแกน QR Code</div>
-      <div class="qr-hint">หรือกรอกรหัสด้วยตัวเอง</div>
-      <div class="input-group" style="margin-top:8px;">
-        <input type="text" id="qr-manual" placeholder="เช่น A1B2C3" maxlength="6" oninput="this.value=this.value.toUpperCase(); updateQR(this.value);">
+  <div id="loading" class="loading" style="padding:3rem 1rem;">กำลังโหลด...</div>
+ 
+  <div id="app" style="display:none;">
+    <div class="shop-header">
+      <div class="shop-icon">🧵</div>
+      <div>
+        <div class="shop-name">เจริญพร ชุดนักเรียน</div>
+        <div class="shop-sub">@charoenporn</div>
       </div>
     </div>
-
-    <div class="step">
-      <div class="step-title"><span class="step-num">2</span>เบอร์โทรศัพท์</div>
-      <div class="input-group">
-        <input type="tel" id="phone" placeholder="0812345678" maxlength="10">
+ 
+    <div class="tabs">
+      <div class="tab active" id="tab-reg" onclick="switchTab('reg')">ลงทะเบียน</div>
+      <div class="tab" id="tab-check" onclick="switchTab('check')">เช็คสถานะ</div>
+    </div>
+ 
+    <!-- TAB 1: ลงทะเบียน -->
+    <div class="tab-content active" id="content-reg">
+      <div id="reg-form">
+        <div id="alert-reg" class="alert"></div>
+ 
+        <div class="step" style="margin-top:8px;">
+          <div class="step-title"><span class="step-num">1</span>รหัส QR จากสติกเกอร์ที่ร้านให้</div>
+          <div class="qr-display empty" id="qr-display" onclick="scanQR()">กดเพื่อสแกน QR Code</div>
+          <div class="hint">หรือกรอกรหัส 6 ตัวด้านล่าง</div>
+          <input type="text" id="qr-input" placeholder="เช่น QS6RTR" maxlength="6" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;text-align:center;letter-spacing:3px;outline:none;" oninput="this.value=this.value.toUpperCase();updateQR(this.value)">
+        </div>
+ 
+        <div class="step">
+          <div class="step-title"><span class="step-num">2</span>เบอร์โทรศัพท์</div>
+          <input type="tel" id="phone-input" placeholder="0812345678" maxlength="10" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;outline:none;">
+        </div>
+ 
+        <div class="step">
+          <div class="step-title"><span class="step-num">3</span>บัญชี Line ของคุณ</div>
+          <div class="profile-row">
+            <img class="profile-avatar" id="reg-avatar" src="" alt="">
+            <div>
+              <div class="profile-name" id="reg-name"></div>
+              <div class="profile-sub">บัญชีที่จะรับแจ้งเตือน</div>
+            </div>
+          </div>
+        </div>
+ 
+        <button class="btn-main" id="reg-btn" onclick="submitRegister()">ยืนยันลงทะเบียน</button>
+      </div>
+ 
+      <div class="success-screen" id="reg-success">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">ลงทะเบียนสำเร็จ!</div>
+        <div class="success-sub">เราจะแจ้งเตือนคุณผ่าน Line<br>เมื่อเสื้อถูกส่งให้ช่างปัก<br>และเมื่อปักเสร็จพร้อมรับ 🙏</div>
       </div>
     </div>
-
-    <div class="step">
-      <div class="step-title"><span class="step-num">3</span>บัญชี Line ของคุณ</div>
-      <div class="profile-row" id="profile-row">
-        <img class="profile-avatar" id="profile-avatar" src="" alt="">
-        <div>
-          <div class="profile-name" id="profile-name"></div>
-          <div class="profile-sub">บัญชีที่จะรับแจ้งเตือน</div>
+ 
+    <!-- TAB 2: เช็คสถานะ -->
+    <div class="tab-content" id="content-check">
+      <div id="alert-check" class="alert" style="margin-top:8px;"></div>
+ 
+      <div class="step" style="margin-top:8px;">
+        <div class="step-title"><span class="step-num">1</span>กรอกรหัส QR จากสติกเกอร์</div>
+        <input type="text" id="check-qr" placeholder="เช่น QS6RTR" maxlength="6" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;text-align:center;letter-spacing:3px;outline:none;" oninput="this.value=this.value.toUpperCase()">
+      </div>
+ 
+      <button class="btn-main" id="check-btn" onclick="checkStatus()" style="margin-top:4px;">ตรวจสอบสถานะ</button>
+ 
+      <div class="status-result" id="status-result">
+        <div class="status-row">
+          <span class="status-label">รหัส QR</span>
+          <span class="status-val" id="r-qr"></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">สถานะ</span>
+          <span id="r-status"></span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">อัพเดตล่าสุด</span>
+          <span class="status-val" id="r-updated"></span>
+        </div>
+        <div class="status-row" id="r-line-row">
+          <span class="status-label">การแจ้งเตือน</span>
+          <span class="status-val" id="r-line"></span>
         </div>
       </div>
     </div>
-
-    <button class="btn" id="submit-btn" onclick="submitRegister()">ยืนยันลงทะเบียน</button>
   </div>
-
-  <div id="success-screen" class="success-screen">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">ลงทะเบียนสำเร็จแล้ว!</div>
-    <div class="success-sub">เราจะแจ้งเตือนคุณผ่าน Line<br>เมื่อเสื้อถูกส่งให้ช่างปัก<br>และเมื่อปักเสร็จพร้อมรับ 🙏</div>
-  </div>
-
 </div>
-
+ 
 <script>
 const LIFF_ID = '2009630803-8mGWtrDu';
-const API_URL = 'https://script.google.com/macros/s/AKfycbxjWb47gXi7GDL0EERE_6jTvf1t_5d6FDc2f9LM_JPyWb5OJoxQfd4IfH1FvObK2KwR/exec'; // ใส่ URL ของ Apps Script
-
+const API_URL = 'https://script.google.com/macros/s/AKfycbxjWb47gXi7GDL0EERE_6jTvf1t_5d6FDc2f9LM_JPyWb5OJoxQfd4IfH1FvObK2KwR/exec';
+ 
 let lineUserId = '';
 let qrCode = '';
-
+ 
 async function initLiff() {
   try {
     await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
+    if (!liff.isLoggedIn()) { liff.login(); return; }
     const profile = await liff.getProfile();
     lineUserId = profile.userId;
-    document.getElementById('profile-name').textContent = profile.displayName;
-    document.getElementById('profile-avatar').src = profile.pictureUrl;
+    document.getElementById('reg-name').textContent = profile.displayName;
+    document.getElementById('reg-avatar').src = profile.pictureUrl || '';
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('main-form').style.display = 'block';
-
-    // ถ้ามี QR มาจาก URL parameter
+    document.getElementById('app').style.display = 'block';
+ 
     const params = new URLSearchParams(window.location.search);
     const qrParam = params.get('qr');
     if (qrParam) {
       qrCode = qrParam.toUpperCase();
-      document.getElementById('qr-manual').value = qrCode;
+      document.getElementById('qr-input').value = qrCode;
       updateQRDisplay(qrCode);
     }
-  } catch (err) {
+  } catch(err) {
     document.getElementById('loading').textContent = 'เกิดข้อผิดพลาด: ' + err.message;
   }
 }
-
-function updateQR(val) {
-  qrCode = val.toUpperCase();
-  updateQRDisplay(qrCode);
+ 
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('content-' + tab).classList.add('active');
 }
-
+ 
+function updateQR(val) {
+  qrCode = val;
+  updateQRDisplay(val);
+}
+ 
 function updateQRDisplay(code) {
   const el = document.getElementById('qr-display');
-  if (code) {
-    el.textContent = code;
-    el.className = 'qr-display';
-  } else {
-    el.textContent = 'กดเพื่อสแกน QR Code';
-    el.className = 'qr-display empty';
-  }
+  if (code) { el.textContent = code; el.className = 'qr-display'; }
+  else { el.textContent = 'กดเพื่อสแกน QR Code'; el.className = 'qr-display empty'; }
 }
-
+ 
 async function scanQR() {
   try {
     if (liff.isInClient()) {
       const result = await liff.scanCodeV2();
       if (result.value) {
         qrCode = result.value.toUpperCase();
-        document.getElementById('qr-manual').value = qrCode;
+        document.getElementById('qr-input').value = qrCode;
         updateQRDisplay(qrCode);
       }
     } else {
-      showAlert('กรุณากรอกรหัส QR ด้วยตัวเองครับ', 'error');
+      showAlert('reg', 'กรุณากรอกรหัสด้วยตัวเองครับ', 'error');
     }
-  } catch (err) {
-    showAlert('ไม่สามารถสแกนได้ กรุณากรอกรหัสด้วยตัวเอง', 'error');
+  } catch(err) {
+    showAlert('reg', 'ไม่สามารถสแกนได้ กรุณากรอกรหัสด้วยตัวเอง', 'error');
   }
 }
-
+ 
 async function submitRegister() {
-  const phone = document.getElementById('phone').value.trim();
-  qrCode = document.getElementById('qr-manual').value.trim().toUpperCase();
-
-  if (!qrCode || qrCode.length !== 6) {
-    showAlert('กรุณากรอกรหัส QR ให้ครบ 6 ตัว', 'error'); return;
-  }
-  if (!phone || phone.length < 9) {
-    showAlert('กรุณากรอกเบอร์โทรให้ถูกต้อง', 'error'); return;
-  }
-  if (!lineUserId) {
-    showAlert('ไม่พบ Line account กรุณาลองใหม่', 'error'); return;
-  }
-
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'กำลังบันทึก...';
-
+  const phone = document.getElementById('phone-input').value.trim();
+  qrCode = document.getElementById('qr-input').value.trim().toUpperCase();
+  if (!qrCode || qrCode.length !== 6) { showAlert('reg','กรุณากรอกรหัส QR ให้ครบ 6 ตัว','error'); return; }
+  if (!phone || phone.length < 9) { showAlert('reg','กรุณากรอกเบอร์โทรให้ถูกต้อง','error'); return; }
+  if (!lineUserId) { showAlert('reg','ไม่พบ Line account กรุณาลองใหม่','error'); return; }
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        action: 'register_line',
-        qr_code: qrCode,
-        line_user_id: lineUserId,
-        phone: phone
-      })
+      body: JSON.stringify({ action:'register_line', qr_code:qrCode, line_user_id:lineUserId, phone:phone })
     });
     const data = await res.json();
     if (data.ok) {
-      document.getElementById('main-form').style.display = 'none';
-      document.getElementById('success-screen').classList.add('show');
+      document.getElementById('reg-form').style.display = 'none';
+      document.getElementById('reg-success').classList.add('show');
     } else {
-      showAlert(data.error || 'เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
-      btn.disabled = false;
-      btn.textContent = 'ยืนยันลงทะเบียน';
+      showAlert('reg', data.error || 'เกิดข้อผิดพลาด', 'error');
+      btn.disabled = false; btn.textContent = 'ยืนยันลงทะเบียน';
     }
-  } catch (err) {
-    showAlert('เชื่อมต่อไม่ได้ กรุณาลองใหม่', 'error');
-    btn.disabled = false;
-    btn.textContent = 'ยืนยันลงทะเบียน';
+  } catch(err) {
+    showAlert('reg','เชื่อมต่อไม่ได้ กรุณาลองใหม่','error');
+    btn.disabled = false; btn.textContent = 'ยืนยันลงทะเบียน';
   }
 }
-
-function showAlert(msg, type) {
-  const el = document.getElementById('alert');
+ 
+async function checkStatus() {
+  const qr = document.getElementById('check-qr').value.trim().toUpperCase();
+  if (!qr || qr.length !== 6) { showAlert('check','กรุณากรอกรหัส QR ให้ครบ 6 ตัว','error'); return; }
+  const btn = document.getElementById('check-btn');
+  btn.disabled = true; btn.textContent = 'กำลังค้นหา...';
+  document.getElementById('status-result').className = 'status-result';
+  try {
+    const res = await fetch(API_URL + '?action=get_order&qr_code=' + qr);
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('r-qr').textContent = data.qr_code;
+      const statusMap = { 'ว่าง':'p-gray', 'รับเสื้อ':'p-gray', 'ส่งช่างปัก':'p-blue', 'ปักเสร็จแล้ว':'p-green' };
+      const pillClass = statusMap[data.status] || 'p-gray';
+      document.getElementById('r-status').innerHTML = `<span class="status-pill ${pillClass}">${data.status || 'ยังไม่มีข้อมูล'}</span>`;
+      const d = data.updated_at ? new Date(data.updated_at).toLocaleDateString('th-TH') : '-';
+      document.getElementById('r-updated').textContent = d;
+      document.getElementById('r-line').textContent = data.has_line ? 'เปิดรับแจ้งเตือนแล้ว' : 'ยังไม่ได้ลงทะเบียน';
+      document.getElementById('status-result').classList.add('show');
+      showAlert('check','','');
+    } else {
+      showAlert('check', data.error || 'ไม่พบข้อมูล', 'error');
+    }
+  } catch(err) {
+    showAlert('check','เชื่อมต่อไม่ได้ กรุณาลองใหม่','error');
+  }
+  btn.disabled = false; btn.textContent = 'ตรวจสอบสถานะ';
+}
+ 
+function showAlert(tab, msg, type) {
+  const el = document.getElementById('alert-' + tab);
+  if (!msg) { el.style.display = 'none'; return; }
   el.textContent = msg;
   el.className = 'alert ' + type;
 }
-
+ 
 initLiff();
 </script>
 </body>
 </html>
+ 
