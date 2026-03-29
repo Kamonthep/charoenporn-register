@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>สแกนงานปัก — เจริญพร</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f0;min-height:100vh;}
+
+.header{background:#1a1a2e;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.header-title{font-size:16px;font-weight:600;color:#fff;}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.date-badge{font-size:11px;color:rgba(255,255,255,0.6);}
+
+.mode-section{padding:14px 16px 8px;}
+.mode-label{font-size:12px;color:#666;margin-bottom:8px;font-weight:500;}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mode-btn{border:1.5px solid #e0e0e0;border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;user-select:none;}
+.mode-btn:active{transform:scale(0.96);}
+.mode-btn.active-gray{border-color:#888780;background:#F1EFE8;}
+.mode-btn.active-blue{border-color:#378ADD;background:#E6F1FB;}
+.mode-btn.active-green{border-color:#639922;background:#EAF3DE;}
+.mode-icon{font-size:22px;margin-bottom:4px;}
+.mode-name{font-size:12px;font-weight:600;color:#333;}
+.mode-desc{font-size:10px;color:#888;margin-top:2px;}
+
+.scanner-box{margin:8px 16px;border-radius:14px;overflow:hidden;display:none;}
+.scanner-box.visible{display:block;}
+
+.cam-area{position:relative;height:140px;background:#0d0d1a;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.cam-frame{position:relative;width:100px;height:100px;}
+.cc{position:absolute;width:16px;height:16px;border-color:rgba(255,255,255,0.9);border-style:solid;}
+.cc.tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:3px 0 0 0;}
+.cc.tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 3px 0 0;}
+.cc.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 3px;}
+.cc.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 3px 0;}
+.scanline{position:absolute;left:4px;right:4px;height:2px;background:rgba(255,255,255,0.8);animation:sl 1.8s ease-in-out infinite;}
+.scanline.off{animation-play-state:paused;opacity:0;}
+@keyframes sl{0%{top:4px;opacity:0;}8%{opacity:1;}92%{opacity:1;}100%{top:92px;opacity:0;}}
+.cam-status{position:absolute;bottom:0;left:0;right:0;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#06C755;animation:pulse 1.2s ease-in-out infinite;}
+.sdot.idle{background:#666;animation:none;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.stxt{font-size:11px;color:rgba(255,255,255,.75);}
+.count-badge{font-size:11px;background:rgba(255,255,255,.15);color:#fff;padding:2px 10px;border-radius:99px;}
+
+.hidden-input{position:absolute;opacity:0;width:1px;height:1px;top:0;left:0;}
+
+.last-row{padding:10px 14px;background:#fff;border-top:0.5px solid #f0f0f0;display:none;align-items:center;gap:10px;min-height:56px;}
+.last-row.visible{display:flex;}
+.last-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.last-info{flex:1;min-width:0;}
+.last-name{font-size:13px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.last-detail{font-size:11px;color:#888;}
+.last-badge{font-size:10px;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.b-sent{background:#EAF3DE;color:#27500A;}
+.b-none{background:#F1EFE8;color:#5F5E5A;}
+.b-err{background:#FCEBEB;color:#791F1F;}
+
+.bottom-bar{padding:8px 14px 10px;background:#fff;border-top:0.5px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;}
+.tally-wrap{display:flex;align-items:baseline;gap:4px;}
+.tally-num{font-size:26px;font-weight:700;color:#1a1a1a;line-height:1;}
+.tally-unit{font-size:12px;color:#888;}
+.done-btn{background:transparent;border:1.5px solid #ddd;border-radius:10px;padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;color:#555;}
+.done-btn:active{background:#f5f5f5;}
+
+.sim-bar{padding:8px 12px;background:#f8f8f8;border-top:0.5px solid #eee;display:flex;gap:8px;}
+.sim-input{flex:1;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;outline:none;}
+.sim-btn{background:#185FA5;border:none;border-radius:8px;padding:7px 14px;font-size:12px;color:#fff;cursor:pointer;}
+
+.summary-box{margin:8px 16px;background:#fff;border-radius:12px;padding:12px 14px;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.summary-box.visible{display:flex;}
+.sum-text{font-size:13px;color:#555;}
+.sum-text b{color:#1a1a1a;}
+
+.feed-section{padding:0 16px 16px;}
+.feed-header{display:flex;align-items:center;justify-content:space-between;padding:10px 2px 8px;}
+.feed-title{font-size:13px;font-weight:600;color:#333;}
+.feed-clear{font-size:12px;color:#aaa;cursor:pointer;}
+.feed-list{display:flex;flex-direction:column;gap:6px;}
+.fi{display:flex;align-items:center;gap:9px;background:#fff;border-radius:10px;padding:9px 12px;animation:fin .2s ease;}
+@keyframes fin{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.fi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.fi-body{flex:1;min-width:0;}
+.fi-name{font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fi-detail{font-size:11px;color:#888;}
+.fi-right{text-align:right;flex-shrink:0;}
+.fi-time{font-size:11px;color:#aaa;}
+.fi-badge{font-size:10px;padding:2px 7px;border-radius:99px;margin-top:2px;display:inline-block;}
+
+.no-mode{text-align:center;padding:2.5rem 1rem;color:#aaa;font-size:13px;line-height:1.8;}
+.no-mode-icon{font-size:40px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">สแกนงานปัก</div>
+    <div class="header-sub">เจริญพร ชุดนักเรียน</div>
+  </div>
+  <div class="date-badge" id="date-badge"></div>
+</div>
+
+<div class="mode-section">
+  <div class="mode-label">เลือกโหมดแล้วสแกนต่อเนื่องได้เลย</div>
+  <div class="mode-grid">
+    <div class="mode-btn" id="mb-0" onclick="setMode(0)">
+      <div class="mode-icon">📥</div>
+      <div class="mode-name">รับเสื้อ</div>
+      <div class="mode-desc">จากลูกค้า</div>
+    </div>
+    <div class="mode-btn" id="mb-1" onclick="setMode(1)">
+      <div class="mode-icon">🚚</div>
+      <div class="mode-name">ส่งช่างปัก</div>
+      <div class="mode-desc">ส่งออกจากร้าน</div>
+    </div>
+    <div class="mode-btn" id="mb-2" onclick="setMode(2)">
+      <div class="mode-icon">✅</div>
+      <div class="mode-name">ปักเสร็จ</div>
+      <div class="mode-desc">ช่างส่งคืน</div>
+    </div>
+  </div>
+</div>
+
+<div class="scanner-box" id="scanner-box">
+  <div class="cam-area" id="cam-area" onclick="focusInput()">
+    <input class="hidden-input" id="qr-hidden" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="cam-frame">
+      <div class="cc tl"></div><div class="cc tr"></div>
+      <div class="cc bl"></div><div class="cc br"></div>
+      <div class="scanline" id="scanline"></div>
+    </div>
+    <div class="cam-status">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="sdot" id="sdot"></div>
+        <span class="stxt" id="stxt">พร้อมสแกน</span>
+      </div>
+      <span class="count-badge" id="cbadge">0 ชิ้น</span>
+    </div>
+  </div>
+
+  <div class="last-row" id="last-row">
+    <div class="last-dot" id="ldot"></div>
+    <div class="last-info">
+      <div class="last-name" id="lname"></div>
+      <div class="last-detail" id="ldetail"></div>
+    </div>
+    <span class="last-badge" id="lbadge"></span>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="tally-wrap">
+      <div class="tally-num" id="tally">0</div>
+      <div class="tally-unit">ชิ้นสแกนแล้ว</div>
+    </div>
+    <button class="done-btn" onclick="finishMode()">จบโหมด ✓</button>
+  </div>
+
+  <div class="sim-bar">
+    <input class="sim-input" id="sim-input" placeholder="ทดสอบ: พิมพ์ QR แล้วกด Enter หรือปุ่มส่ง" onkeydown="if(event.key==='Enter'){simScan(this.value);this.value='';}">
+    <button class="sim-btn" onclick="simScan(document.getElementById('sim-input').value);document.getElementById('sim-input').value='';">ส่ง</button>
+  </div>
+</div>
+
+<div class="summary-box" id="summary-box"></div>
+
+<div class="feed-section">
+  <div id="feed-area" style="display:none;">
+    <div class="feed-header">
+      <div class="feed-title" id="feed-title">รายการสแกน</div>
+      <div class="feed-clear" onclick="clearFeed()">ล้างรายการ</div>
+    </div>
+    <div class="feed-list" id="feed-list"></div>
+  </div>
+  <div class="no-mode" id="no-mode">
+    <div class="no-mode-icon">📦</div>
+    เลือกโหมดด้านบน<br>แล้วชี้กล้องสแกน QR ได้เลย<br>ระบบอ่านต่อเนื่อง ไม่ต้องกดทุกครั้ง
+  </div>
+</div>
+
+<script>
+const API_URL = 'YOUR_APPS_SCRIPT_URL';
+
+const MODES = [
+  {label:'รับเสื้อ', status:'รับเสื้อ', dot:'#888780', ac:'active-gray', notify:false},
+  {label:'ส่งช่างปัก', status:'ส่งช่างปัก', dot:'#378ADD', ac:'active-blue', notify:true},
+  {label:'ปักเสร็จแล้ว', status:'ปักเสร็จแล้ว', dot:'#639922', ac:'active-green', notify:true},
+];
+
+let curMode = null, count = 0, scanned = [], lastCode = '', debounceT = null;
+
+// แสดงวันที่
+const now = new Date();
+document.getElementById('date-badge').textContent =
+  now.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'});
+
+function setMode(m) {
+  if (curMode === m) { exitMode(); return; }
+  curMode = m; count = 0; scanned = []; lastCode = '';
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('mb-' + i).className = 'mode-btn' + (i === m ? ' ' + MODES[m].ac : '');
+  }
+  document.getElementById('scanner-box').className = 'scanner-box visible';
+  document.getElementById('scanline').className = 'scanline';
+  document.getElementById('sdot').className = 'sdot';
+  document.getElementById('stxt').textContent = MODES[m].label + ' — พร้อมสแกน';
+  document.getElementById('tally').textContent = '0';
+  document.getElementById('cbadge').textContent = '0 ชิ้น';
+  document.getElementById('last-row').className = 'last-row';
+  document.getElementById('feed-list').innerHTML = '';
+  document.getElementById('feed-area').style.display = 'block';
+  document.getElementById('feed-title').textContent = 'รายการ — ' + MODES[m].label;
+  document.getElementById('no-mode').style.display = 'none';
+  document.getElementById('summary-box').className = 'summary-box';
+  focusInput();
+}
+
+function focusInput() {
+  const inp = document.getElementById('qr-hidden');
+  inp.value = ''; inp.focus();
+}
+
+function simScan(val) {
+  const code = val.trim().toUpperCase();
+  if (code) processScan(code);
+  setTimeout(focusInput, 80);
+}
+
+const inp = document.getElementById('qr-hidden');
+inp.addEventListener('input', function() {
+  clearTimeout(debounceT);
+  debounceT = setTimeout(() => {
+    const code = this.value.trim().toUpperCase();
+    this.value = '';
+    if (code) processScan(code);
+    setTimeout(focusInput, 60);
+  }, 120);
+});
+inp.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    clearTimeout(debounceT);
+    const code = this.value.trim().toUpperCase();
+    this.value = '';
+    if (code) processScan(code);
+    setTimeout(focusInput, 60);
+  }
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && curMode !== null) focusInput();
+});
+
+async function processScan(code) {
+  if (curMode === null) return;
+  if (code === lastCode) return;
+  lastCode = code;
+  setTimeout(() => { lastCode = ''; }, 1200);
+
+  const m = MODES[curMode];
+  count++;
+  document.getElementById('tally').textContent = count;
+  document.getElementById('cbadge').textContent = count + ' ชิ้น';
+
+  const now = new Date();
+  const ts = now.getHours().toString().padStart(2,'0') + ':' +
+             now.getMinutes().toString().padStart(2,'0') + ':' +
+             now.getSeconds().toString().padStart(2,'0');
+
+  // แสดง loading ใน last-row ก่อน
+  document.getElementById('last-row').className = 'last-row visible';
+  document.getElementById('ldot').style.background = '#ccc';
+  document.getElementById('lname').textContent = 'กำลังอัพเดต ' + code + '...';
+  document.getElementById('ldetail').textContent = '';
+  document.getElementById('lbadge').textContent = '';
+  document.getElementById('lbadge').className = 'last-badge';
+
+  let name = '', detail = '', dotColor = m.dot, badgeClass = '', badgeText = '', isErr = false;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'update_status', qr_code: code, status: m.status })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      name = data.customer_name || '(ยังไม่ลงทะเบียน)';
+      detail = 'QR: ' + code;
+      if (m.notify) {
+        if (data.notified) { badgeClass = 'b-sent'; badgeText = 'Line แจ้งแล้ว'; }
+        else { badgeClass = 'b-none'; badgeText = 'ไม่มี Line'; }
+      }
+      scanned.push({ code, name, notified: data.notified });
+      playBeep(true);
+    } else {
+      name = 'ไม่พบ QR: ' + code;
+      detail = data.error || 'ไม่มีในระบบ';
+      dotColor = '#E24B4A'; badgeClass = 'b-err'; badgeText = 'ไม่พบ';
+      isErr = true;
+      scanned.push({ code, name: 'ไม่พบ', notified: false });
+      playBeep(false);
+    }
+  } catch(err) {
+    name = 'เชื่อมต่อไม่ได้';
+    detail = 'QR: ' + code;
+    dotColor = '#E24B4A'; badgeClass = 'b-err'; badgeText = 'Error';
+    isErr = true;
+    scanned.push({ code, name: 'Error', notified: false });
+    playBeep(false);
+  }
+
+  // อัพเดต last-row
+  document.getElementById('ldot').style.background = dotColor;
+  document.getElementById('lname').textContent = name;
+  document.getElementById('ldetail').textContent = detail;
+  const lb = document.getElementById('lbadge');
+  lb.className = 'last-badge ' + badgeClass;
+  lb.textContent = badgeText;
+
+  // status indicator
+  const sdot = document.getElementById('sdot');
+  sdot.className = 'sdot idle';
+  document.getElementById('stxt').textContent = isErr ? 'ไม่พบ QR นี้' : name;
+  setTimeout(() => {
+    if (curMode !== null) {
+      sdot.className = 'sdot';
+      document.getElementById('stxt').textContent = MODES[curMode].label + ' — พร้อมสแกน';
+    }
+  }, 1000);
+
+  // เพิ่ม feed
+  const fi = document.createElement('div');
+  fi.className = 'fi';
+  fi.innerHTML = `
+    <div class="fi-dot" style="background:${dotColor};"></div>
+    <div class="fi-body">
+      <div class="fi-name">${name}</div>
+      <div class="fi-detail">${detail}</div>
+    </div>
+    <div class="fi-right">
+      <div class="fi-time">${ts}</div>
+      ${badgeText ? `<span class="fi-badge ${badgeClass}">${badgeText}</span>` : ''}
+    </div>`;
+  document.getElementById('feed-list').prepend(fi);
+}
+
+function finishMode() {
+  if (curMode === null) return;
+  const m = MODES[curMode];
+  const notifyN = scanned.filter(s => s.notified).length;
+  const sb = document.getElementById('summary-box');
+  sb.innerHTML = `<span class="sum-text">โหมด <b>${m.label}</b> เสร็จสิ้น &nbsp;·&nbsp; <b>${scanned.length} ชิ้น</b>${m.notify ? ` &nbsp;·&nbsp; ส่ง Line <b style="color:#27500A;">${notifyN} ราย</b>` : ''}</span>`;
+  sb.className = 'summary-box visible';
+  document.getElementById('scanner-box').className = 'scanner-box';
+  document.getElementById('scanline').className = 'scanline off';
+  for (let i = 0; i < 3; i++) document.getElementById('mb-' + i).className = 'mode-btn';
+  curMode = null;
+}
+
+function clearFeed() {
+  document.getElementById('feed-list').innerHTML = '';
+}
+
+function playBeep(ok) {
+  try {
+    const c = new (window.AudioContext || window.webkitAudioContext)();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.value = ok ? 940 : 280;
+    o.type = ok ? 'sine' : 'square';
+    g.gain.setValueAtTime(0.12, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + (ok ? .1 : .22));
+    o.start(); o.stop(c.currentTime + (ok ? .1 : .22));
+  } catch(e) {}
+}
+</script>
+</body>
+</html>
