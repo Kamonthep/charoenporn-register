@@ -214,7 +214,7 @@ async function submitRegister() {
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'register_line', qr_code:qrCode, line_user_id:lineUserId, phone:phone })
+      body: JSON.stringify({ action:'register_line', qr_code:qrCode, line_user_id:lineUserId, phone:phone, customer_name:document.getElementById('reg-name').textContent })
     });
     const data = await res.json();
     if (data.ok) {
