@@ -150,6 +150,7 @@ const LIFF_ID = '2009630803-8mGWtrDu';
 const API_URL = 'https://script.google.com/macros/s/AKfycbxjWb47gXi7GDL0EERE_6jTvf1t_5d6FDc2f9LM_JPyWb5OJoxQfd4IfH1FvObK2KwR/exec';
 
 let lineUserId = '';
+let lineName = '';
 
 async function initLiff() {
   try {
@@ -158,6 +159,7 @@ async function initLiff() {
     const profile = await liff.getProfile();
     lineUserId = profile.userId;
     document.getElementById('reg-name').textContent = profile.displayName;
+    lineName = profile.displayName;
     document.getElementById('reg-avatar').src = profile.pictureUrl || '';
     document.getElementById('loading').style.display = 'none';
     document.getElementById('app').style.display = 'block';
@@ -214,7 +216,7 @@ async function submitRegister() {
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'register_line', qr_code:qrCode, line_user_id:lineUserId, phone:phone, customer_name:document.getElementById('reg-name').textContent })
+      body: JSON.stringify({ action:'register_line', qr_code:qrCode, line_user_id:lineUserId, phone:phone, customer_name:lineName })
     });
     const data = await res.json();
     if (data.ok) {
